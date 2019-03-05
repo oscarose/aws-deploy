@@ -17,11 +17,11 @@ Resources:
       #ImageId: ami-6871a115
       #ImageId: ami-00e2e77f
       #ImageId: ami-12663b7a
-      KeyName: SCPKEY
+      KeyName: AWS-DEPLOY
       SecurityGroupIds:
-        - sg-cd58fbbb
-        - sg-0e208378
-        - sg-c230528b
+        - sg-0c684d960ba1ae494
+        - sg-0876fe76070503224
+        - sg-09e716fb56b942545
       InstanceType: t2.micro
       IamInstanceProfile: !Ref IamRole
       Tags:
