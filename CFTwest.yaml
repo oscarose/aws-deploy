@@ -9,8 +9,8 @@
     cloudformation:
       aws_access_key: "{{ aws_access_key }}"
       aws_secret_key: "{{ aws_secret_key }}"
-      stack_name: "aws-deploy"
+      stack_name: "awswest-deploy"
       state: "present"
       region: "{{ aws_region }}"
       disable_rollback: true
-      template: "ansible.yaml"
+      template: "/root/.jenkins/workspace/aws-deploy/ansiblewest.yaml"
