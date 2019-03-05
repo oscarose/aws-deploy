@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+
+  IamRole:
+    Description: The name of the iamprofile to associate to the instances
+    Type: String
+    Default: ec2-s3-role
+
+Resources:
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0394fe9914b475c53
+      #ImageId: ami-0ff8a91507f77f867
+      #ImageId: ami-6871a115
+      #ImageId: ami-00e2e77f
+      #ImageId: ami-12663b7a
+      KeyName: SCPKEY
+      SecurityGroupIds:
+        - sg-cd58fbbb
+        - sg-0e208378
+        - sg-c230528b
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref IamRole
+      Tags:
+        - Key: "Name"
+          Value: westjenkins
+      UserData:
+        Fn::Base64: |
+           #!/bin/bash
+           sudo su -
+           yum remove java -y
+           yum update -y
+           yum install curl wget unzip xclock xorg* -y
+           curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+           unzip awscli-bundle.zip
+           ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+           cd /opt
+           aws s3 cp s3://ogbayaml1/apache-tomcat-8.5.37.tar.gz .
+           aws s3 cp s3://ogbayaml1/jdk-8u202-linux-x64.tar.gz .
+           cd .. 
+           mkdir ansible-provisioners
+           cd /ansible-provisioners
+           aws s3 cp s3://ogbayaml1/jenkins.war .
+           aws s3 cp s3://ogbayaml1/epel-release-latest-7.noarch.rpm .
+           rpm -ivh epel-release-latest-7.noarch.rpm
+           yum --enablerepo=epel -y install ansible openssh-clients
+           aws s3 cp s3://ogbayaml1/2.tar.gz .
+           tar xvf 2.tar.gz
+           ansible-playbook main.yaml -vvv > jenkins.log
+           sleep 3m
+           aws s3 cp jenkins.log s3://ogbayaml1/jenkins.log
+           cd ..
+           useradd tomcat
+           chown -R tomcat:tomcat /opt/*
+           systemctl enable tomcat.service
+           systemctl start tomcat.service
+           #cd /etc/init.d/
+           #chkconfig tomcat8 on
+           #cd ..
+           service sshd restart
+           cd /opt/apache-tomcat-8.5.37/webapps/
+           aws s3 cp s3://ogbayaml1/jenkins.war .
+           cd ..
+           systemctl stop tomcat.service
+           systemctl start tomcat.service 
+           #service tomcat8 start 
+           useradd abraham
+           echo oscarose84 | passwd abraham --stdin
+           usermod -aG wheel abraham
+
+
+  OgbaARecords:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: oscarose-ogba.com.
+      Name: !Join [ ".", ["west","oscarose-ogba","com"] ]
+      Type: A
+      TTL: '900'
+      ResourceRecords:
+        - Fn::GetAtt: EC2Instance.PublicIp
+
