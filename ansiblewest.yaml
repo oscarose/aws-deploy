@@ -20,7 +20,8 @@ Resources:
       KeyName: AWS-DEPLOY
       SecurityGroupIds:
         - sg-0c684d960ba1ae494
-        - ssg-0876fe76070503224
+        - sg-0876fe76070503224
+        - sg-09e716fb56b942545
       InstanceType: t2.micro
       IamInstanceProfile: !Ref IamRole
       Tags:
