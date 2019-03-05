@@ -12,7 +12,8 @@ Resources:
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0394fe9914b475c53
+      ImageId: ami-212e0911
+      #ImageId: ami-0394fe9914b475c53
       #ImageId: ami-0ff8a91507f77f867
       #ImageId: ami-6871a115
       #ImageId: ami-00e2e77f
