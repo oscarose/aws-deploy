@@ -11,7 +11,7 @@
       aws_access_key: "{{ aws_access_key }}"
       aws_secret_key: "{{ aws_secret_key }}"
       stack_name: "awseast-deploy"
-      state: "present"
+      state: "{{ state }}"
       region: "{{ aws_region }}"
       disable_rollback: true
       template: "ansible.yaml"
