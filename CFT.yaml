@@ -14,4 +14,4 @@
       state: "present"
       region: "{{ aws_region }}"
       disable_rollback: true
-      template: "/root/.jenkins/workspace/aws-deploy/ansible.yaml"
+      template: "ansible.yaml"
